@@ -5,12 +5,15 @@
 #include <cstring>
 #include <fstream>
 
+
 #define time_unit milliseconds
+
 
 using namespace std;
 using namespace std::chrono;
 
 
+// returns true if the array is sorted
 bool sorted(int arr[], int no){
     for(int i=0; i<no-1; i++){
         if(arr[i] > arr[i+1]){
@@ -24,16 +27,24 @@ bool sorted(int arr[], int no){
 
 void count_sort(int arr[], int no, int maxim){
 
+    // the of all numbers from 0 to maxim
     int* indexes = new int[maxim];
 
+    // reseting
     for(int i=0; i<maxim; i++)
         indexes[i] = 0;
 
+    // indexing
     for(int i=0; i<no; i++)
         indexes[arr[i]] ++;
 
+    // i - index for indexes array
+    // k - index for arr array
     int i=0, k=0;
+
+    // moving back to the original array
     while(i < maxim){
+
         if(indexes[i]){
             for(int j=0; j<indexes[i]; j++, ++k)
                 arr[k] = i;
@@ -95,35 +106,29 @@ void merge(int arr[], int l, int mid, int r){
 
 void merge_sort(int arr[], int l, int r){
 
+    // stop condition
     if(l < r){
         int mid = (l + r - 1) / 2;
 
         merge_sort(arr, l, mid);
         merge_sort(arr, mid+1, r);
-
         merge(arr, l, mid, r);
     }
 }
 
 
-void quicksort(int a[], int st, int dr){
-    if(st < dr){
-        // int range = dr - st + 1;
-        // int m1 = (rand() % range) + st, m2 = (rand() % range) + st, m3 = (rand() % range) + st;
-        // int pivot = medianOfThree(a[m1], a[m2], a[m3]);
-        // int poz;
-        // if(pivot == a[m1]){
-        //     poz = m1;
-        // }
-        // else if(pivot == a[m2]){
-        //     poz = m2;
-        // }
-        // else{
-        //     poz = m3;
-        // }
-        int pivot = a[(st + dr) / 2], poz = (st + dr) / 2;
-        int i = st - 1;
-        for(int j=st;j<=dr;++j){
+void quicksort(int a[], int left, int right){
+
+    // stop condition
+    if(left < right){
+
+        // poz - the random index
+        int poz = rand() % (right-left+1) + left, pivot = a[poz];
+
+        int i = left - 1;
+
+        // in place swapping
+        for(int j=left; j<=right; ++j){
             if(a[j] < pivot){
                 i++;
                 if(i == poz){
@@ -133,12 +138,18 @@ void quicksort(int a[], int st, int dr){
             }
         }
         swap(a[++i], a[poz]);
-        quicksort(a, st, i - 1);
-        quicksort(a, i + 1, dr);
+
+        quicksort(a, left, i - 1);
+        quicksort(a, i + 1, right);
     }
 }
 
 
+// arr - the array, no - number of elements
+// base - the base of radix
+// n - represents the index of current digit (ex. in 1234 2 has the n=2)
+// aux - represents the array of digits
+// copy - represents an array for copying elements
 void pseudo_count_sort(int* arr, int no, int base, int n, int* aux, int* copy){
     
     // array with all elements from 0 to base-1
@@ -146,6 +157,7 @@ void pseudo_count_sort(int* arr, int no, int base, int n, int* aux, int* copy){
     // int* copy = new int[no];
     int a = 1;
     
+    // a = pow(base, n)
     while(n){
         a*=base;
         n--;
@@ -175,8 +187,6 @@ void pseudo_count_sort(int* arr, int no, int base, int n, int* aux, int* copy){
         arr[i] = copy[i];
     }
     
-    // delete[] aux;
-    // delete[] copy;
 }
 
 
@@ -185,28 +195,6 @@ void radix_sort(int arr[], int no, int base){
 
     int* aux = new int[base];
     int* copy = new int[no];
-    
-    // if(log2(base) == (int)log2(base)){
-        
-    //     cout << "Sorting a 2 base" << endl;
-
-    //     int base_power2 = log2(base);
-    //     //cout << base_power2<< endl;
-
-    //     // counting
-    //     for(int i=0; i<no; i++){
-    //         int digits = ceil(log2(arr[i]));
-    //         if(digits > max_digits) max_digits = digits;
-    //     }
-        
-    //     // sorting
-    //     for(int i=0; i<max_digits; i++){
-    //         count_sort_pow2(arr, no, base,base_power2, i, aux, copy);
-    //     }
-    // }
-    // else{
-
-    //     cout << "Sorting a non 2 base" << endl;
 
         // counting
         for(int i=0; i<no; i++){
@@ -218,10 +206,7 @@ void radix_sort(int arr[], int no, int base){
         for(int i=0; i<max_digits; i++){
             pseudo_count_sort(arr, no, base, i, aux, copy);
         }
-    // }
-
     
-
     delete[] aux;
     delete[] copy;
 }
@@ -247,12 +232,15 @@ void shell_sort(int array[], int no) {
     }
 }
 
-
+// copy array from src to dest
 void copy_array(int* dest, int* src, int no){
     for(int i=0; i<no; i++)
         dest[i] = src[i];
 }
 
+
+// takes the input from main() and converts to run
+// teh current program
 void convert_input(int arg, char** args, int* maxim, int* nr_elem, int* base){
 
     *maxim = 0; *nr_elem = 0; *base = 0;
@@ -270,25 +258,16 @@ void convert_input(int arg, char** args, int* maxim, int* nr_elem, int* base){
 
 int main(int arg, char** args){
 
-    // for(int i=0; i<arg; i++ )
-    //     cout << args[i] << endl;
-
     srand(time(NULL));
-    ////////////////////////////////////////////2147483647
-    // int minim = 1, maxim = 100000, nr_elem = 100000000 , base = 1048576;
     int minim = 1, maxim, nr_elem, base;
 
     convert_input(arg, args, &maxim, &nr_elem, &base);
-    // cout << maxim << " " << nr_elem << " " << base << endl;
 
     int* arr = new int[nr_elem+1];
     int* copy = new int[nr_elem+1];
     int* initial_array = new int[nr_elem+1];
 
     ofstream f("rezultate.txt", ios::app);
-
-    // std::chrono::_V2::system_clock::time_point start , stop;
-    // std::enable_if<true, std::chrono::duration<long long int, std::ratio<1ll, 1000ll> > >::type duration;
 
     for(int i=0; i<nr_elem; i++){
         arr[i] = rand() % maxim;
@@ -307,13 +286,7 @@ int main(int arg, char** args){
 
     auto duration = duration_cast<time_unit>(stop - start);
  
-    f << "Count " << duration.count() << "ms ";
-
-    // cout << (sorted(arr, nr_elem) == 1 ? "elements were sorted" : "there was an error") << endl;
-
-    // for(int i=0; i<nr_elem; i++)
-    //     cout << arr[i] << ' ';
-    // cout << endl;
+    f << "Count " << duration.count() << " ";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -327,13 +300,7 @@ int main(int arg, char** args){
 
     duration = duration_cast<time_unit>(stop - start);
  
-    f << "Quick " << duration.count() << "ms ";
-
-    // cout << (sorted(arr, nr_elem) == 1 ? "elements were sorted" : "there was an error") << endl;
-
-    // for(int i=0; i<nr_elem; i++)
-    //     cout << arr[i] << ' ';
-    // cout << endl;
+    f << "Quick " << duration.count() << " ";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -347,13 +314,7 @@ int main(int arg, char** args){
 
     duration = duration_cast<time_unit>(stop - start);
  
-    f << "Radix " << duration.count() << "ms ";
-
-    // cout << (sorted(arr, nr_elem) == 1 ? "elements were sorted" : "there was an error") << endl;
-
-    // for(int i=0; i<nr_elem; i++)
-    //     cout << arr[i] << ' ';
-    // cout << endl;
+    f << "Radix " << duration.count() << " ";
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -367,13 +328,7 @@ int main(int arg, char** args){
 
     duration = duration_cast<time_unit>(stop - start);
  
-    f << "Shell " << duration.count() << "ms ";
-
-    // cout << (sorted(arr, nr_elem) == 1 ? "elements were sorted" : "there was an error") << endl;
-
-    // for(int i=0; i<nr_elem; i++)
-    //     cout << arr[i] << ' ';
-    // cout << endl;
+    f << "Shell " << duration.count() << " ";
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -387,13 +342,7 @@ int main(int arg, char** args){
 
     duration = duration_cast<time_unit>(stop - start);
  
-    f << "Merge " << duration.count() << "ms ";
-
-    // cout << (sorted(arr, nr_elem) == 1 ? "elements were sorted" : "there was an error") << endl;
-
-    // for(int i=0; i<nr_elem; i++)
-    //     cout << arr[i] << ' ';
-    // cout << endl;
+    f << "Merge " << duration.count() << " ";
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -403,19 +352,5 @@ int main(int arg, char** args){
     delete[] arr;
     delete[] copy;
     delete[] initial_array;
-
-
+    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
