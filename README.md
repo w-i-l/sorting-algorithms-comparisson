@@ -41,8 +41,8 @@
 </ol>
 <p>The running command should pass all the argumets with a dash:</p>
 <code>./main.exe -maximum_number -no_of_elements -base</code>
-
-<br><br>
+<br>
+<br>
 
 <p>The <code>main.py</code> file contains an automated tester for this program. You can perform any test you want by changing the parameters.</p>
 <p>Just ensure you compiled the <code>.cpp</code> file first and then run this:</p>
